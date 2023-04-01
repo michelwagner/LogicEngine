@@ -32,7 +32,10 @@
 *.app
 
 # Build directory
-build/*
+build/
+
+# googletest directory
+googletest/
 
 .vscode/*
 !.vscode/settings.json
