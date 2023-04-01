@@ -20,6 +20,7 @@ public:
     virtual bool Evaluate() const override;
 
 protected:
+    bool IsInputSymbolValid(uint8_t u8_InputSymbol);
     void ClearManagedLogicBlocks();
     ILogicBlock* GetTopBlock();
     void StoreBlock(ILogicBlock* p_LogicBlock);

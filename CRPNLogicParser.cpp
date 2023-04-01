@@ -1,4 +1,5 @@
 #include "CRPNLogicParser.h"
+#include <cctype>
 
 CRPNLogicParser::CRPNLogicParser(CLogicInputData &r_LogicInputData)
     : mr_LogicInputData{r_LogicInputData},
@@ -23,9 +24,9 @@ void CRPNLogicParser::Parse(const char *pu8_Expression)
     uint32_t i = 0;
     while (pu8_Expression[i] != 0u)
     {
-        const char c_Symbol = pu8_Expression[i];
+        const uint8_t u8_Symbol = std::toupper(pu8_Expression[i]);
 
-        switch (c_Symbol)
+        switch (u8_Symbol)
         {
         case '!':
             CreateLogicNotOperator();
@@ -39,8 +40,15 @@ void CRPNLogicParser::Parse(const char *pu8_Expression)
             CreateLogicAndOperator();
             break;
 
+        case ' ':
+        case '\t':
+        break;
+
         default:
-            CreateLogicInput(c_Symbol);
+            if (IsInputSymbolValid(u8_Symbol))
+            {
+                CreateLogicInput(u8_Symbol);
+            }
             break;
         }
 
@@ -51,6 +59,12 @@ void CRPNLogicParser::Parse(const char *pu8_Expression)
     {
         p_RootBlock = m_ParserStack.top();
     }
+}
+
+
+bool CRPNLogicParser::IsInputSymbolValid(uint8_t u8_InputSymbol)
+{
+    return ((u8_InputSymbol >= 'A') && (u8_InputSymbol <= 'Z'));
 }
 
 
@@ -112,8 +126,6 @@ void CRPNLogicParser::CreateLogicInput(char c_Symbol)
 
 uint32_t CRPNLogicParser::ConvertSymbolToChannel(char c_Symbol) const
 {
-    const uint8_t u8_LowerCase = static_cast<uint8_t>(c_Symbol) | 0x20u;
-    const uint32_t u32_Channel = (u8_LowerCase - static_cast<uint8_t>('a'));
-
+    const uint32_t u32_Channel = (static_cast<uint8_t>(c_Symbol) - static_cast<uint8_t>('A'));
     return u32_Channel;
 }

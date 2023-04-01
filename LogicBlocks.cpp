@@ -20,6 +20,7 @@ bool CLogicInputData::Get(uint32_t u32_Channel)
 };
 
 
+
 CLogicInput::CLogicInput(ILogicInputData &r_LogicInputData, uint32_t u32_Channel)
     : mr_LogicInputData{r_LogicInputData},
       mu32_Channel{u32_Channel}
@@ -33,13 +34,18 @@ bool CLogicInput::Evaluate() const
 };
 
 
+
 CLogicNotOperator::CLogicNotOperator(ILogicBlock &r_A)
-    : mr_A{r_A} {};
+    : mr_A{r_A}
+{
+};
+
 
 bool CLogicNotOperator::Evaluate() const
 {
     return (mr_A.Evaluate() == false);
 };
+
 
 
 CLogicAndOperator::CLogicAndOperator(ILogicBlock &r_A, ILogicBlock &r_B)
@@ -59,7 +65,6 @@ CLogicOrOperator::CLogicOrOperator(ILogicBlock &r_A, ILogicBlock &r_B)
     : mr_A{r_A},
       mr_B{r_B}
 {
-
 };
 
 

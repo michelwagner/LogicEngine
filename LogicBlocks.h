@@ -10,12 +10,14 @@ public:
 };
 
 
+
 class ILogicInputData
 {
 public:
     virtual ~ILogicInputData() = default;
     virtual bool Get(uint32_t u32_Channel) = 0;
 };
+
 
 
 class CLogicInputData: public ILogicInputData
@@ -31,6 +33,7 @@ public:
 };
 
 
+
 class CLogicInput: public ILogicBlock
 {
 protected:
@@ -42,6 +45,7 @@ public:
     CLogicInput(ILogicInputData& r_LogicInputData, uint32_t u32_Channel);
     virtual bool Evaluate() const override;
 };
+
 
 
 class CLogicNotOperator: public ILogicBlock
@@ -56,6 +60,7 @@ public:
 };
 
 
+
 class CLogicAndOperator: public ILogicBlock
 {
 protected:
@@ -67,6 +72,7 @@ public:
     CLogicAndOperator(ILogicBlock& r_A, ILogicBlock& r_B);
     virtual bool Evaluate() const override;
 };
+
 
 
 class CLogicOrOperator: public ILogicBlock

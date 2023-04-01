@@ -83,8 +83,7 @@ TEST(logic_test, CRPNLogicParser_NoExpression)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "";
-    RPNLogicParser.Parse(&c_Expression[0u]);
+    RPNLogicParser.Parse("");
 
     LogicInputData.Set(0xffffffffu);
     EXPECT_EQ(RPNLogicParser.Evaluate(), false);
@@ -96,8 +95,7 @@ TEST(logic_test, CRPNLogicParserAnd)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "AB*";
-    RPNLogicParser.Parse(&c_Expression[0u]);
+    RPNLogicParser.Parse("AB*");
 
     LogicInputData.Set(0x00000000u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), false);
@@ -115,8 +113,7 @@ TEST(logic_test, CRPNLogicParserOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "AB+";
-    RPNLogicParser.Parse(&c_Expression[0u]);
+    RPNLogicParser.Parse("AB+");
 
     LogicInputData.Set(0x00000000u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), false);
@@ -134,8 +131,7 @@ TEST(logic_test, CRPNLogicParserOrAndOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "AB+CD+*";
-    RPNLogicParser.Parse(&c_Expression[0u]);
+    RPNLogicParser.Parse("AB+CD+*");
 
     LogicInputData.Set(0x00000000u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), false);
@@ -153,8 +149,25 @@ TEST(logic_test, CRPNLogicParserNotOrAndOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "Ab+Cd+*!";
-    RPNLogicParser.Parse(&c_Expression[0u]);
+    RPNLogicParser.Parse("AB+CD+*!");
+
+    LogicInputData.Set(0x00000000u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(0x00000003u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(0x00000005u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+}
+
+
+TEST(logic_test, CRPNLogicParserWhitespacesLowerCase)
+{
+    CLogicInputData LogicInputData;
+    CRPNLogicParser RPNLogicParser(LogicInputData);
+
+    RPNLogicParser.Parse("Ab+\tCd+ * !!!");
 
     LogicInputData.Set(0x00000000u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), true);
