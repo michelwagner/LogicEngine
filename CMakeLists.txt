@@ -6,8 +6,8 @@ enable_testing()
 #gtest_discover_tests(logic_tests)
 add_subdirectory(googletest)
 include_directories(googletest/googletest/include)
-add_executable(logic_tests logic_tests.cpp)
-add_executable(logic main.cpp)
+add_executable(logic_tests logic_tests.cpp rpn_parser.cpp)
+add_executable(logic main.cpp rpn_parser.cpp)
 target_link_libraries(
     logic_tests
     GTest::gtest_main
