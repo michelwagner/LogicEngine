@@ -83,3 +83,24 @@ public:
         return mr_A.Evaluate() && mr_B.Evaluate();
     };
 };
+
+class CLogicOROperator: public ILogicExpression
+{
+protected:
+    ILogicExpression& mr_A;
+    ILogicExpression& mr_B;
+
+public:
+    virtual ~CLogicOROperator() = default;
+
+    CLogicOROperator(ILogicExpression& r_A, ILogicExpression& r_B)
+    :mr_A{r_A},
+    mr_B{r_B}
+    {
+    };
+
+    virtual bool Evaluate() override
+    {
+        return mr_A.Evaluate() || mr_B.Evaluate();
+    };
+};

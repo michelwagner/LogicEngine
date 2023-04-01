@@ -45,6 +45,22 @@ TEST(logic_test, CLogicAndOperator)
 }
 
 
+TEST(logic_test, CLogicOROperator)
+{
+    CLogicInputData LogicInputData;
+    CLogicInput LogicInput0_L(LogicInputData, 0u);
+    CLogicInput LogicInput1_H(LogicInputData, 1u);
+    CLogicInput LogicInput2_L(LogicInputData, 2u);
+    LogicInputData.Set(0x00000002u);
+
+    CLogicOROperator LogicAndOperator01_LH(LogicInput0_L, LogicInput1_H);
+    CLogicOROperator LogicAndOperator02_LL(LogicInput0_L, LogicInput2_L);
+
+    EXPECT_EQ(LogicAndOperator01_LH.Evaluate(), true);
+    EXPECT_EQ(LogicAndOperator02_LL.Evaluate(), false);
+}
+
+
 int main(int argc, char* argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
