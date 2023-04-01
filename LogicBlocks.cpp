@@ -1,4 +1,4 @@
-#include "logic.h"
+#include "LogicBlocks.h"
 
 
 CLogicInputData::CLogicInputData()

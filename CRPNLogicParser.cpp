@@ -1,4 +1,4 @@
-#include "rpn_parser.h"
+#include "CRPNLogicParser.h"
 
 CRPNLogicParser::CRPNLogicParser(CLogicInputData &r_LogicInputData)
     : mr_LogicInputData{r_LogicInputData},

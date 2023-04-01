@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include "logic.h"
-#include "rpn_parser.h"
+#include "CRPNLogicParser.h"
 
 
 TEST(logic_test, LogicInput)
@@ -97,7 +96,7 @@ TEST(logic_test, CRPNLogicParserAnd)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "ab*";
+    const char c_Expression[] = "AB*";
     RPNLogicParser.Parse(&c_Expression[0u]);
 
     LogicInputData.Set(0x00000000u);
@@ -116,7 +115,7 @@ TEST(logic_test, CRPNLogicParserOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "ab+";
+    const char c_Expression[] = "AB+";
     RPNLogicParser.Parse(&c_Expression[0u]);
 
     LogicInputData.Set(0x00000000u);
@@ -135,7 +134,7 @@ TEST(logic_test, CRPNLogicParserOrAndOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "ab+cd+*";
+    const char c_Expression[] = "AB+CD+*";
     RPNLogicParser.Parse(&c_Expression[0u]);
 
     LogicInputData.Set(0x00000000u);
@@ -154,7 +153,7 @@ TEST(logic_test, CRPNLogicParserNotOrAndOr)
     CLogicInputData LogicInputData;
     CRPNLogicParser RPNLogicParser(LogicInputData);
 
-    const char c_Expression[] = "ab+cd+*!";
+    const char c_Expression[] = "Ab+Cd+*!";
     RPNLogicParser.Parse(&c_Expression[0u]);
 
     LogicInputData.Set(0x00000000u);

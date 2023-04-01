@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stack>
-#include "logic.h"
+#include "LogicBlocks.h"
 
 
 class CRPNLogicParser: public ILogicBlock
