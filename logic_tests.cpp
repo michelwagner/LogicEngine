@@ -79,105 +79,105 @@ TEST(logic_test, CLogicOROperator)
 }
 
 
-TEST(logic_test, CRPNLogicParser_NoExpression)
+TEST(logic_test, PostfixLogicParser_NoExpression)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("");
+    PostfixLogicParser.Parse("");
 
     LogicInputData.Set(0xffffffffu);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 }
 
 
-TEST(logic_test, CRPNLogicParserAnd)
+TEST(logic_test, PostfixLogicParserAnd)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("AB*");
+    PostfixLogicParser.Parse("AB*");
 
     LogicInputData.Set(0x00000000u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 
     LogicInputData.Set(0x00000001u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 
     LogicInputData.Set(0x00000003u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 }
 
 
-TEST(logic_test, CRPNLogicParserOr)
+TEST(logic_test, PostfixLogicParserOr)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("AB+");
+    PostfixLogicParser.Parse("AB+");
 
     LogicInputData.Set(0x00000000u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 
     LogicInputData.Set(0x00000001u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 
     LogicInputData.Set(0x00000003u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 }
 
 
-TEST(logic_test, CRPNLogicParserOrAndOr)
+TEST(logic_test, PostfixLogicParserOrAndOr)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("AB+CD+*");
+    PostfixLogicParser.Parse("AB+CD+*");
 
     LogicInputData.Set(0x00000000u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 
     LogicInputData.Set(0x00000003u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 
     LogicInputData.Set(0x00000005u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 }
 
 
-TEST(logic_test, CRPNLogicParserNotOrAndOr)
+TEST(logic_test, PostfixLogicParserNotOrAndOr)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("AB+CD+*!");
+    PostfixLogicParser.Parse("AB+CD+*!");
 
     LogicInputData.Set(0x00000000u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 
     LogicInputData.Set(0x00000003u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 
     LogicInputData.Set(0x00000005u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 }
 
 
-TEST(logic_test, CRPNLogicParserWhitespacesLowerCase)
+TEST(logic_test, PostfixLogicParserWhitespacesLowerCase)
 {
     CLogicInputData LogicInputData;
-    CPostfixLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    RPNLogicParser.Parse("Ab+\tCd+ * !!!");
+    PostfixLogicParser.Parse("Ab+\tCd+ * !!!");
 
     LogicInputData.Set(0x00000000u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 
     LogicInputData.Set(0x00000003u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
 
     LogicInputData.Set(0x00000005u);
-    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 }
 
 
