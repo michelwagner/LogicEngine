@@ -27,6 +27,10 @@ void CRPNLogicParser::Parse(const char *pu8_Expression)
 
         switch (c_Symbol)
         {
+        case '!':
+            CreateLogicNotOperator();
+            break;
+
         case '+':
             CreateLogicOrOperator();
             break;
@@ -78,6 +82,12 @@ void CRPNLogicParser::StoreBlock(ILogicBlock *p_LogicBlock)
 {
     m_ManagedLogicBlocks.push(p_LogicBlock);
     m_ParserStack.push(p_LogicBlock);
+}
+
+
+void CRPNLogicParser::CreateLogicNotOperator()
+{
+    StoreBlock(new CLogicNotOperator(*GetTopBlock()));
 }
 
 

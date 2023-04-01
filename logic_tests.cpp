@@ -32,6 +32,21 @@ TEST(logic_test, LogicInput)
 }
 
 
+TEST(logic_test, CLogicNotOperator)
+{
+    CLogicInputData LogicInputData;
+    LogicInputData.Set(0x00000002u);
+    CLogicInput LogicInput0_L(LogicInputData, 0u);
+    CLogicInput LogicInput1_H(LogicInputData, 1u);
+
+    CLogicNotOperator LogicNotOperator1_L(LogicInput0_L);
+    CLogicNotOperator LogicNotOperator2_H(LogicInput1_H);
+
+    EXPECT_EQ(LogicNotOperator1_L.Evaluate(), true);
+    EXPECT_EQ(LogicNotOperator2_H.Evaluate(), false);
+}
+
+
 TEST(logic_test, CLogicAndOperator)
 {
     CLogicInputData LogicInputData;
@@ -131,6 +146,25 @@ TEST(logic_test, CRPNLogicParserOrAndOr)
 
     LogicInputData.Set(0x00000005u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+}
+
+
+TEST(logic_test, CRPNLogicParserNotOrAndOr)
+{
+    CLogicInputData LogicInputData;
+    CRPNLogicParser RPNLogicParser(LogicInputData);
+
+    const char c_Expression[] = "ab+cd+*!";
+    RPNLogicParser.Parse(&c_Expression[0u]);
+
+    LogicInputData.Set(0x00000000u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(0x00000003u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(0x00000005u);
+    EXPECT_EQ(RPNLogicParser.Evaluate(), false);
 }
 
 

@@ -65,6 +65,26 @@ public:
 };
 
 
+class CLogicNotOperator: public ILogicBlock
+{
+protected:
+    ILogicBlock& mr_A;
+
+public:
+    virtual ~CLogicNotOperator() = default;
+
+    CLogicNotOperator(ILogicBlock& r_A)
+    :mr_A{r_A}
+    {
+    };
+
+    virtual bool Evaluate() const override
+    {
+        return (mr_A.Evaluate() == false);
+    };
+};
+
+
 class CLogicAndOperator: public ILogicBlock
 {
 protected:
@@ -82,7 +102,7 @@ public:
 
     virtual bool Evaluate() const override
     {
-        return mr_A.Evaluate() && mr_B.Evaluate();
+        return (mr_A.Evaluate() && mr_B.Evaluate());
     };
 };
 
@@ -104,6 +124,6 @@ public:
 
     virtual bool Evaluate() const override
     {
-        return mr_A.Evaluate() || mr_B.Evaluate();
+        return (mr_A.Evaluate() || mr_B.Evaluate());
     };
 };

@@ -23,6 +23,7 @@ protected:
     void ClearManagedLogicBlocks();
     ILogicBlock* GetTopBlock();
     void StoreBlock(ILogicBlock* p_LogicBlock);
+    void CreateLogicNotOperator();
     void CreateLogicOrOperator();
     void CreateLogicAndOperator();
     void CreateLogicInput(char c_Symbol);
