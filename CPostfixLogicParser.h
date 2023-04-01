@@ -4,7 +4,7 @@
 #include "LogicBlocks.h"
 
 
-class CRPNLogicParser: public ILogicBlock
+class CPostfixLogicParser: public ILogicBlock
 {
 protected:
     CLogicInputData& mr_LogicInputData;
@@ -13,8 +13,8 @@ protected:
     ILogicBlock* p_RootBlock;
 
 public:
-    CRPNLogicParser(CLogicInputData& r_LogicInputData);
-    ~CRPNLogicParser();
+    CPostfixLogicParser(CLogicInputData& r_LogicInputData);
+    ~CPostfixLogicParser();
 
     void Parse(const char* pu8_Expression);
     virtual bool Evaluate() const override;

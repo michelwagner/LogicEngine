@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "CRPNLogicParser.h"
+#include "CPostfixLogicParser.h"
+#include "CInfixToPostfixExpression.h"
 
 
 TEST(logic_test, LogicInput)
@@ -81,7 +82,7 @@ TEST(logic_test, CLogicOROperator)
 TEST(logic_test, CRPNLogicParser_NoExpression)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("");
 
@@ -93,7 +94,7 @@ TEST(logic_test, CRPNLogicParser_NoExpression)
 TEST(logic_test, CRPNLogicParserAnd)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("AB*");
 
@@ -111,7 +112,7 @@ TEST(logic_test, CRPNLogicParserAnd)
 TEST(logic_test, CRPNLogicParserOr)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("AB+");
 
@@ -129,7 +130,7 @@ TEST(logic_test, CRPNLogicParserOr)
 TEST(logic_test, CRPNLogicParserOrAndOr)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("AB+CD+*");
 
@@ -147,7 +148,7 @@ TEST(logic_test, CRPNLogicParserOrAndOr)
 TEST(logic_test, CRPNLogicParserNotOrAndOr)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("AB+CD+*!");
 
@@ -165,7 +166,7 @@ TEST(logic_test, CRPNLogicParserNotOrAndOr)
 TEST(logic_test, CRPNLogicParserWhitespacesLowerCase)
 {
     CLogicInputData LogicInputData;
-    CRPNLogicParser RPNLogicParser(LogicInputData);
+    CPostfixLogicParser RPNLogicParser(LogicInputData);
 
     RPNLogicParser.Parse("Ab+\tCd+ * !!!");
 
@@ -177,6 +178,104 @@ TEST(logic_test, CRPNLogicParserWhitespacesLowerCase)
 
     LogicInputData.Set(0x00000005u);
     EXPECT_EQ(RPNLogicParser.Evaluate(), false);
+}
+
+
+TEST(logic_test, ExpressionParser01)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "A+B+C+D";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "ABCD+++", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser01a)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "A*B*C*D";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "ABCD***", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser02)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "(A+B)*(C+D)";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "AB+CD+*", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser03)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "(A*B)+(C*D)+(A*(B*(C*D)))";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "AB*CD*ABCD***++", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser04)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "((A+B)*(C+D))+((A*B)+(C*D))";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "AB+CD+*AB*CD*++", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser05)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "A+(B*(!(C+D+E)))+(!F)";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "ABCDE++!*F!++", sizeof(rpn)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser06)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+    const char expression[] = "(!A)*(!B)";
+    char const* p_src = &expression[0u];
+    char rpn[32] = { 0u };
+    char *p_rpn = &rpn[0u];
+
+    InfixToPostfixExpression.Parse(p_src, p_rpn);
+
+    EXPECT_EQ(strncmp(&rpn[0u], "A!B!*", sizeof(rpn)), 0);
 }
 
 

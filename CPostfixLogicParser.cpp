@@ -1,7 +1,7 @@
-#include "CRPNLogicParser.h"
+#include "CPostfixLogicParser.h"
 #include <cctype>
 
-CRPNLogicParser::CRPNLogicParser(CLogicInputData &r_LogicInputData)
+CPostfixLogicParser::CPostfixLogicParser(CLogicInputData &r_LogicInputData)
     : mr_LogicInputData{r_LogicInputData},
       m_ParserStack{},
       m_ManagedLogicBlocks{},
@@ -10,14 +10,14 @@ CRPNLogicParser::CRPNLogicParser(CLogicInputData &r_LogicInputData)
 }
 
 
-CRPNLogicParser::~CRPNLogicParser()
+CPostfixLogicParser::~CPostfixLogicParser()
 {
     ClearManagedLogicBlocks();
     p_RootBlock = nullptr;
 }
 
 
-void CRPNLogicParser::Parse(const char *pu8_Expression)
+void CPostfixLogicParser::Parse(const char *pu8_Expression)
 {
     ClearManagedLogicBlocks();
 
@@ -62,19 +62,19 @@ void CRPNLogicParser::Parse(const char *pu8_Expression)
 }
 
 
-bool CRPNLogicParser::IsInputSymbolValid(uint8_t u8_InputSymbol)
+bool CPostfixLogicParser::IsInputSymbolValid(uint8_t u8_InputSymbol)
 {
     return ((u8_InputSymbol >= 'A') && (u8_InputSymbol <= 'Z'));
 }
 
 
-bool CRPNLogicParser::Evaluate() const
+bool CPostfixLogicParser::Evaluate() const
 {
     return p_RootBlock != nullptr ? p_RootBlock->Evaluate() : false;
 };
 
 
-void CRPNLogicParser::ClearManagedLogicBlocks()
+void CPostfixLogicParser::ClearManagedLogicBlocks()
 {
     while (m_ManagedLogicBlocks.empty() == false)
     {
@@ -84,7 +84,7 @@ void CRPNLogicParser::ClearManagedLogicBlocks()
 }
 
 
-ILogicBlock *CRPNLogicParser::GetTopBlock()
+ILogicBlock *CPostfixLogicParser::GetTopBlock()
 {
     ILogicBlock *p_Block = m_ParserStack.top();
     m_ParserStack.pop();
@@ -92,39 +92,39 @@ ILogicBlock *CRPNLogicParser::GetTopBlock()
 }
 
 
-void CRPNLogicParser::StoreBlock(ILogicBlock *p_LogicBlock)
+void CPostfixLogicParser::StoreBlock(ILogicBlock *p_LogicBlock)
 {
     m_ManagedLogicBlocks.push(p_LogicBlock);
     m_ParserStack.push(p_LogicBlock);
 }
 
 
-void CRPNLogicParser::CreateLogicNotOperator()
+void CPostfixLogicParser::CreateLogicNotOperator()
 {
     StoreBlock(new CLogicNotOperator(*GetTopBlock()));
 }
 
 
-void CRPNLogicParser::CreateLogicOrOperator()
+void CPostfixLogicParser::CreateLogicOrOperator()
 {
     StoreBlock(new CLogicOrOperator(*GetTopBlock(), *GetTopBlock()));
 }
 
 
-void CRPNLogicParser::CreateLogicAndOperator()
+void CPostfixLogicParser::CreateLogicAndOperator()
 {
     StoreBlock(new CLogicAndOperator(*GetTopBlock(), *GetTopBlock()));
 }
 
 
-void CRPNLogicParser::CreateLogicInput(char c_Symbol)
+void CPostfixLogicParser::CreateLogicInput(char c_Symbol)
 {
     const uint32_t u32_Channel = ConvertSymbolToChannel(c_Symbol);
     StoreBlock(new CLogicInput(mr_LogicInputData, u32_Channel));
 }
 
 
-uint32_t CRPNLogicParser::ConvertSymbolToChannel(char c_Symbol) const
+uint32_t CPostfixLogicParser::ConvertSymbolToChannel(char c_Symbol) const
 {
     const uint32_t u32_Channel = (static_cast<uint8_t>(c_Symbol) - static_cast<uint8_t>('A'));
     return u32_Channel;
