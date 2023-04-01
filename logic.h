@@ -1,12 +1,11 @@
 #pragma once
-
 #include <stdint.h>
 
 
-class ILogicExpression
+class ILogicBlock
 {
 public:
-    virtual ~ILogicExpression() = default;
+    virtual ~ILogicBlock() = default;
     virtual bool Evaluate() const = 0;
 };
 
@@ -44,7 +43,7 @@ public:
 };
 
 
-class CLogicInput: public ILogicExpression
+class CLogicInput: public ILogicBlock
 {
 protected:
     ILogicInputData& mr_LogicInputData;
@@ -66,16 +65,16 @@ public:
 };
 
 
-class CLogicAndOperator: public ILogicExpression
+class CLogicAndOperator: public ILogicBlock
 {
 protected:
-    ILogicExpression& mr_A;
-    ILogicExpression& mr_B;
+    ILogicBlock& mr_A;
+    ILogicBlock& mr_B;
 
 public:
     virtual ~CLogicAndOperator() = default;
 
-    CLogicAndOperator(ILogicExpression& r_A, ILogicExpression& r_B)
+    CLogicAndOperator(ILogicBlock& r_A, ILogicBlock& r_B)
     :mr_A{r_A},
     mr_B{r_B}
     {
@@ -88,16 +87,16 @@ public:
 };
 
 
-class CLogicOrOperator: public ILogicExpression
+class CLogicOrOperator: public ILogicBlock
 {
 protected:
-    ILogicExpression& mr_A;
-    ILogicExpression& mr_B;
+    ILogicBlock& mr_A;
+    ILogicBlock& mr_B;
 
 public:
     virtual ~CLogicOrOperator() = default;
 
-    CLogicOrOperator(ILogicExpression& r_A, ILogicExpression& r_B)
+    CLogicOrOperator(ILogicBlock& r_A, ILogicBlock& r_B)
     :mr_A{r_A},
     mr_B{r_B}
     {

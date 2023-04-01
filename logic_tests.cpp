@@ -35,11 +35,11 @@ TEST(logic_test, LogicInput)
 TEST(logic_test, CLogicAndOperator)
 {
     CLogicInputData LogicInputData;
+    LogicInputData.Set(0x00000003u);
     CLogicInput LogicInput0_H(LogicInputData, 0u);
     CLogicInput LogicInput1_H(LogicInputData, 1u);
     CLogicInput LogicInput2_L(LogicInputData, 2u);
 
-    LogicInputData.Set(0x00000003u);
     CLogicAndOperator LogicAndOperator01_HH(LogicInput0_H, LogicInput1_H);
     CLogicAndOperator LogicAndOperator02_HL(LogicInput0_H, LogicInput2_L);
 
@@ -51,11 +51,11 @@ TEST(logic_test, CLogicAndOperator)
 TEST(logic_test, CLogicOROperator)
 {
     CLogicInputData LogicInputData;
+    LogicInputData.Set(0x00000002u);
     CLogicInput LogicInput0_L(LogicInputData, 0u);
     CLogicInput LogicInput1_H(LogicInputData, 1u);
     CLogicInput LogicInput2_L(LogicInputData, 2u);
 
-    LogicInputData.Set(0x00000002u);
     CLogicOrOperator LogicAndOperator01_LH(LogicInput0_L, LogicInput1_H);
     CLogicOrOperator LogicAndOperator02_LL(LogicInput0_L, LogicInput2_L);
 

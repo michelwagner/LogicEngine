@@ -1,27 +1,39 @@
 #pragma once
-
 #include <stdint.h>
 #include <stack>
+#include <vector>
 #include "logic.h"
 
 
-class CRPNLogicParser: public ILogicExpression
+class CRPNLogicParser: public ILogicBlock
 {
 protected:
     CLogicInputData& mr_LogicInputData;
-    std::stack<ILogicExpression*> m_Stack;
+    std::stack<ILogicBlock*> m_ParserStack;
+    std::vector<ILogicBlock*> m_LogicBlocks;
+    ILogicBlock* p_RootBlock;
+    uint32_t mu32_NumberOfLogicBlocks;
 
 public:
     CRPNLogicParser(CLogicInputData& r_LogicInputData)
     :mr_LogicInputData{r_LogicInputData},
-    m_Stack{}
-    {}
+    m_ParserStack{},
+    p_RootBlock{nullptr},
+    mu32_NumberOfLogicBlocks{0u}
+    {
+    }
+
+    ~CRPNLogicParser()
+    {
+        ClearLogicBlocks();
+    }
 
     void Parse(const char* pu8_Expression)
     {
-        uint32_t i = 0;
-        m_Stack.push(nullptr);
+        ClearLogicBlocks();
+        m_ParserStack.push(nullptr);
         
+        uint32_t i = 0;
         while (pu8_Expression[i] != 0u)
         {
             const char c_Symbol = pu8_Expression[i];
@@ -43,35 +55,48 @@ public:
 
             i++;
         }
+
+        p_RootBlock = m_ParserStack.top();
     }
 
     virtual bool Evaluate() const override
     {
-        ILogicExpression const* p_Expression = m_Stack.top();
-        return p_Expression != nullptr ? p_Expression->Evaluate() : false;
+        return p_RootBlock != nullptr ? p_RootBlock->Evaluate() : false;
     };
 
 protected:
+    void ClearLogicBlocks()
+    {
+        for (uint32_t i = 0u; i < mu32_NumberOfLogicBlocks; i++)
+        {
+            delete m_LogicBlocks[i];
+        }
+        mu32_NumberOfLogicBlocks = 0;
+    }
+
+    ILogicBlock* GetTopBlock()
+    {
+        ILogicBlock* p_Block = m_ParserStack.top();
+        m_ParserStack.pop();
+        return p_Block;
+    }
+
+    void StoreBlock(ILogicBlock* p_LogicBlock)
+    {
+        m_LogicBlocks[mu32_NumberOfLogicBlocks++] = p_LogicBlock;
+        m_ParserStack.push(p_LogicBlock);
+    }
+
     void CreateLogicOrOperator()
     {
-        ILogicExpression* p_B = m_Stack.top();
-        m_Stack.pop();
-        ILogicExpression* p_A = m_Stack.top();
-        m_Stack.pop();
-
-        CLogicOrOperator* p_LogicOperator = new CLogicOrOperator(*p_A, *p_B);
-        m_Stack.push(p_LogicOperator);
+        ILogicBlock* p_LogicBlock = new CLogicOrOperator(*GetTopBlock(), *GetTopBlock());
+        StoreBlock(p_LogicBlock);
     }
 
     void CreateLogicAndOperator()
     {
-        ILogicExpression* p_B = m_Stack.top();
-        m_Stack.pop();
-        ILogicExpression* p_A = m_Stack.top();
-        m_Stack.pop();
-
-        CLogicAndOperator* p_LogicOperator = new CLogicAndOperator(*p_A, *p_B);
-        m_Stack.push(p_LogicOperator);
+        ILogicBlock* p_LogicBlock = new CLogicAndOperator(*GetTopBlock(), *GetTopBlock());
+        StoreBlock(p_LogicBlock);
     }
 
     void CreateLogicInput(char c_Symbol)
@@ -79,7 +104,7 @@ protected:
         const uint8_t u8_LowerCase = static_cast<uint8_t>(c_Symbol) | 0x20u;
         const uint32_t u32_Channel = (u8_LowerCase  - static_cast<uint8_t>('a'));
 
-        CLogicInput* p_LogicInput = new CLogicInput(mr_LogicInputData, u32_Channel);
-        m_Stack.push(p_LogicInput);
+        ILogicBlock* p_LogicBlock = new CLogicInput(mr_LogicInputData, u32_Channel);
+        StoreBlock(p_LogicBlock);
     }
 };
