@@ -26,22 +26,22 @@ TEST(logic_test, LogicInput)
     CLogicInput LogicInput1(LogicInputData, 1u);
     CLogicInput LogicInput31(LogicInputData, 31u);
 
-    LogicInputData.Set(0x00000000u);
+    LogicInputData.Set(0b00000000'00000000'00000000'00000000u);
     EXPECT_EQ(LogicInput0.Evaluate(), false);
     EXPECT_EQ(LogicInput1.Evaluate(), false);
     EXPECT_EQ(LogicInput31.Evaluate(), false);
 
-    LogicInputData.Set(0x00000001u);
+    LogicInputData.Set(0b00000000'00000000'00000000'00000001u);
     EXPECT_EQ(LogicInput0.Evaluate(), true);
     EXPECT_EQ(LogicInput1.Evaluate(), false);
     EXPECT_EQ(LogicInput31.Evaluate(), false);
 
-    LogicInputData.Set(0x80000000u);
+    LogicInputData.Set(0b10000000'00000000'00000000'00000000u);
     EXPECT_EQ(LogicInput0.Evaluate(), false);
     EXPECT_EQ(LogicInput1.Evaluate(), false);
     EXPECT_EQ(LogicInput31.Evaluate(), true);
 
-    LogicInputData.Set(0x80000001u);
+    LogicInputData.Set(0b10000000'00000000'00000000'00000001u);
     EXPECT_EQ(LogicInput0.Evaluate(), true);
     EXPECT_EQ(LogicInput1.Evaluate(), false);
     EXPECT_EQ(LogicInput31.Evaluate(), true);
@@ -51,7 +51,7 @@ TEST(logic_test, LogicInput)
 TEST(logic_test, CLogicNotOperator)
 {
     CLogicInputData LogicInputData;
-    LogicInputData.Set(0x00000002u);
+    LogicInputData.Set(0b00000000'00000000'00000000'00000010u);
     CLogicInput LogicInput0_L(LogicInputData, 0u);
     CLogicInput LogicInput1_H(LogicInputData, 1u);
 
@@ -66,7 +66,7 @@ TEST(logic_test, CLogicNotOperator)
 TEST(logic_test, CLogicAndOperator)
 {
     CLogicInputData LogicInputData;
-    LogicInputData.Set(0x00000003u);
+    LogicInputData.Set(0b00000000'00000000'00000000'00000011u);
     CLogicInput LogicInput0_H(LogicInputData, 0u);
     CLogicInput LogicInput1_H(LogicInputData, 1u);
     CLogicInput LogicInput2_L(LogicInputData, 2u);
@@ -82,7 +82,7 @@ TEST(logic_test, CLogicAndOperator)
 TEST(logic_test, CLogicOROperator)
 {
     CLogicInputData LogicInputData;
-    LogicInputData.Set(0x00000002u);
+    LogicInputData.Set(0b00000000'00000000'00000000'00000010u);
     CLogicInput LogicInput0_L(LogicInputData, 0u);
     CLogicInput LogicInput1_H(LogicInputData, 1u);
     CLogicInput LogicInput2_L(LogicInputData, 2u);
@@ -102,7 +102,7 @@ TEST(logic_test, PostfixLogicParser_NoExpression)
 
     PostfixLogicParser.Parse("");
 
-    LogicInputData.Set(0xffffffffu);
+    LogicInputData.Set(0b11111111'11111111'11111111'11111111u);
     EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
 }
 
@@ -112,7 +112,7 @@ TEST(logic_test, PostfixLogicParserAnd)
     CLogicInputData LogicInputData;
     CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    PostfixLogicParser.Parse("AB*");
+    PostfixLogicParser.Parse("AB&");
 
     LogicInputData.Set(ExpressionToInput(""));
     EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
@@ -130,7 +130,7 @@ TEST(logic_test, PostfixLogicParserOr)
     CLogicInputData LogicInputData;
     CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    PostfixLogicParser.Parse("AB+");
+    PostfixLogicParser.Parse("AB|");
 
     LogicInputData.Set(ExpressionToInput(""));
     EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
@@ -148,7 +148,7 @@ TEST(logic_test, PostfixLogicParserOrAndOr)
     CLogicInputData LogicInputData;
     CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    PostfixLogicParser.Parse("AB+CD+*");
+    PostfixLogicParser.Parse("AB|CD|&");
 
     LogicInputData.Set(ExpressionToInput(""));
     EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
@@ -184,7 +184,7 @@ TEST(logic_test, PostfixLogicParserWhitespacesLowerCase)
     CLogicInputData LogicInputData;
     CPostfixLogicParser PostfixLogicParser(LogicInputData);
 
-    PostfixLogicParser.Parse("Ab+\tCd+ * !!!");
+    PostfixLogicParser.Parse("Ab|\tCd| & !! !");
 
     LogicInputData.Set(ExpressionToInput(""));
     EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
@@ -214,10 +214,10 @@ TEST(logic_test, ExpressionParser01a)
     CInfixToPostfixExpression InfixToPostfixExpression;
 
     char ac_PostfixExpression[32u] = { 0u };
-    const char ac_InfixExpression[] = "A*B*C*D";
+    const char ac_InfixExpression[] = "A&B&C&D";
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
-    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCD***", sizeof(ac_PostfixExpression)), 0);
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCD&&&", sizeof(ac_PostfixExpression)), 0);
 }
 
 
@@ -226,10 +226,10 @@ TEST(logic_test, ExpressionParser02)
     CInfixToPostfixExpression InfixToPostfixExpression;
 
     char ac_PostfixExpression[32u] = { 0u };
-    const char ac_InfixExpression[] = "(A+B)*(C+D)";
+    const char ac_InfixExpression[] = "(A|B)&(C|D)";
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
-    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "AB+CD+*", sizeof(ac_PostfixExpression)), 0);
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "AB|CD|&", sizeof(ac_PostfixExpression)), 0);
 }
 
 
@@ -238,10 +238,10 @@ TEST(logic_test, ExpressionParser03)
     CInfixToPostfixExpression InfixToPostfixExpression;
 
     char ac_PostfixExpression[32u] = { 0u };
-    const char ac_InfixExpression[] = "(A*B)+(C*D)+(A*(B*(C*D)))";
+    const char ac_InfixExpression[] = "(A&B)|(C&D)|(A&(B&(C&D)))";
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
-    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "AB*CD*ABCD***++", sizeof(ac_PostfixExpression)), 0);
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "AB&CD&ABCD&&&||", sizeof(ac_PostfixExpression)), 0);
 }
 
 
@@ -262,10 +262,10 @@ TEST(logic_test, ExpressionParser05)
     CInfixToPostfixExpression InfixToPostfixExpression;
 
     char ac_PostfixExpression[32u] = { 0u };
-    const char ac_InfixExpression[] = "A+(B*(!(C+D+E)))+(!F)";
+    const char ac_InfixExpression[] = "A|(B&(!(C|D|E)))|(!F)";
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
-    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCDE++!*F!++", sizeof(ac_PostfixExpression)), 0);
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCDE||!&F!||", sizeof(ac_PostfixExpression)), 0);
 }
 
 
@@ -274,10 +274,10 @@ TEST(logic_test, ExpressionParser06)
     CInfixToPostfixExpression InfixToPostfixExpression;
 
     char ac_PostfixExpression[32u] = { 0u };
-    const char ac_InfixExpression[] = "(!A)*(!B)";
+    const char ac_InfixExpression[] = "(!A)&(!B)";
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
-    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "A!B!*", sizeof(ac_PostfixExpression)), 0);
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "A!B!&", sizeof(ac_PostfixExpression)), 0);
 }
 
 
