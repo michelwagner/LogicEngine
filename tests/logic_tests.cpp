@@ -197,6 +197,24 @@ TEST(logic_test, PostfixLogicParserWhitespacesLowerCase)
 }
 
 
+TEST(logic_test, PostfixLogicParserAlternativeOperatorSymols)
+{
+    CLogicInputData LogicInputData;
+    CPostfixLogicParser PostfixLogicParser(LogicInputData);
+
+    PostfixLogicParser.Parse("AB+CD+*!!!");
+
+    LogicInputData.Set(ExpressionToInput(""));
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(ExpressionToInput("AB"));
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), true);
+
+    LogicInputData.Set(ExpressionToInput("AD"));
+    EXPECT_EQ(PostfixLogicParser.Evaluate(), false);
+}
+
+
 TEST(logic_test, ExpressionParser01)
 {
     CInfixToPostfixExpression InfixToPostfixExpression;
@@ -218,6 +236,18 @@ TEST(logic_test, ExpressionParser01a)
     InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
 
     EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCD&&&", sizeof(ac_PostfixExpression)), 0);
+}
+
+
+TEST(logic_test, ExpressionParser01aAlternativeOperatorSymbols)
+{
+    CInfixToPostfixExpression InfixToPostfixExpression;
+
+    char ac_PostfixExpression[32u] = { 0u };
+    const char ac_InfixExpression[] = "(A*B*C*D)+D";
+    InfixToPostfixExpression.Parse(&ac_InfixExpression[0u], &ac_PostfixExpression[0u]);
+
+    EXPECT_EQ(strncmp(&ac_PostfixExpression[0u], "ABCD***D+", sizeof(ac_PostfixExpression)), 0);
 }
 
 
