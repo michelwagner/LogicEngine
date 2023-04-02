@@ -1,5 +1,6 @@
 #include "CInfixToPostfixExpression.h"
 
+
 void CInfixToPostfixExpression::Parse(const char *pc_InfixExpression, char *pc_PostfixExpression)
 {
     ParseRecursive(pc_InfixExpression, pc_PostfixExpression);
@@ -45,7 +46,9 @@ void CInfixToPostfixExpression::ParseRecursive(char const *&rpc_InfixExpression,
 
 bool CInfixToPostfixExpression::IsOperator(char c_Symbol)
 {
-    return ((c_Symbol == '*') || (c_Symbol == '+') || (c_Symbol == '!'));
+    return ((c_Symbol == '!') ||
+        (c_Symbol == '*') || (c_Symbol == '+') || 
+        (c_Symbol == '&') || (c_Symbol == '|'));
 }
 
 

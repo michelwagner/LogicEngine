@@ -33,10 +33,12 @@ void CPostfixLogicParser::Parse(const char *pu8_Expression)
             break;
 
         case '+':
+        case '|':
             CreateLogicOrOperator();
             break;
 
         case '*':
+        case '&':
             CreateLogicAndOperator();
             break;
 
