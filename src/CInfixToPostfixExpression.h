@@ -5,7 +5,14 @@ class CInfixToPostfixExpression
 public:
     CInfixToPostfixExpression() = default;
 
-    void Parse(char const *&rpc_InfixExpression, char *&rpc_PostfixExpression)
+    void Parse(const char *pc_InfixExpression, char *pc_PostfixExpression)
+    {
+        ParseRecursive(pc_InfixExpression, pc_PostfixExpression);
+    }
+
+
+protected:
+    void ParseRecursive(char const *&rpc_InfixExpression, char *&rpc_PostfixExpression)
     {
         char ca_OperatorStack[8u];
         uint8_t u8_OperatorStackIndex = 0u;
@@ -17,7 +24,7 @@ public:
 
             if (c_Symbol == '(')
             {
-                Parse(rpc_InfixExpression, rpc_PostfixExpression);
+                ParseRecursive(rpc_InfixExpression, rpc_PostfixExpression);
             }
             else if (c_Symbol == ')')
             {
@@ -41,11 +48,12 @@ public:
         }
     }
 
-protected:
+
     bool IsOperator(char c_Symbol)
     {
         return ((c_Symbol == '*') || (c_Symbol == '+') || (c_Symbol == '!'));
     }
+
 
     void Append(char c_Symbol, char *&rpc_Expression)
     {
