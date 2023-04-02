@@ -1,6 +1,6 @@
+#include <CPostfixLogicParser.h>
+#include <CInfixToPostfixExpression.h>
 #include <gtest/gtest.h>
-#include "CPostfixLogicParser.h"
-#include "CInfixToPostfixExpression.h"
 
 
 TEST(logic_test, LogicInput)
