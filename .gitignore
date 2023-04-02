@@ -34,9 +34,6 @@
 # Build directory
 build/
 
-# googletest directory
-googletest/
-
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
