@@ -5,51 +5,51 @@ class CInfixToPostfixExpression
 public:
     CInfixToPostfixExpression() = default;
 
-    void Parse(char const *&src, char *&rpn)
+    void Parse(char const *&rpc_InfixExpression, char *&rpc_PostfixExpression)
     {
-        char ops[8u];
-        uint8_t n = 0u;
+        char ca_OperatorStack[8u];
+        uint8_t u8_OperatorStackIndex = 0u;
 
-        while (*src != 0)
+        while (*rpc_InfixExpression != 0)
         {
-            const char s = *src;
-            src++;
+            const char c_Symbol = *rpc_InfixExpression;
+            rpc_InfixExpression++;
 
-            if (s == '(')
+            if (c_Symbol == '(')
             {
-                Parse(src, rpn);
+                Parse(rpc_InfixExpression, rpc_PostfixExpression);
             }
-            else if (s == ')')
+            else if (c_Symbol == ')')
             {
                 break;
             }
-            else if (IsOperator(s))
+            else if (IsOperator(c_Symbol))
             {
-                ops[n] = s;
-                n++;
+                ca_OperatorStack[u8_OperatorStackIndex] = c_Symbol;
+                u8_OperatorStackIndex++;
             }
             else
             {
-                Append(s, rpn);
+                Append(c_Symbol, rpc_PostfixExpression);
             }
         }
 
-        while (n > 0u)
+        while (u8_OperatorStackIndex > 0u)
         {
-            n--;
-            Append(ops[n], rpn);
+            u8_OperatorStackIndex--;
+            Append(ca_OperatorStack[u8_OperatorStackIndex], rpc_PostfixExpression);
         }
     }
 
 protected:
-    bool IsOperator(char Symbol)
+    bool IsOperator(char c_Symbol)
     {
-        return ((Symbol == '*') || (Symbol == '+') || (Symbol == '!'));
+        return ((c_Symbol == '*') || (c_Symbol == '+') || (c_Symbol == '!'));
     }
 
-    void Append(char Symbol, char *&rpn)
+    void Append(char c_Symbol, char *&rpc_Expression)
     {
-        *rpn = Symbol;
-        rpn++;
+        *rpc_Expression = c_Symbol;
+        rpc_Expression++;
     }
 };
